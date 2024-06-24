@@ -22,7 +22,7 @@ jobs:
       run: make check-format
     
     - name: Vet
-      run: got vet ./...
+      run: go vet ./...
   
   lint:
    name: Lint
