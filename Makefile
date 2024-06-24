@@ -36,4 +36,4 @@ report:
 	go tool cover -html=coverage.out -o cover.html
 
 check-format:
-    test -z $$(go fmt ./...)
+	test -z $$(go fmt ./...)
