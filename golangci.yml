@@ -1,0 +1,10 @@
+linters:
+  enable:
+    - gosec
+
+output:
+  format: colored-line-number
+
+  print-issued-lines: false
+
+  print-linter-name: true

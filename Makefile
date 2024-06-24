@@ -2,7 +2,7 @@ GO_VERSION := 1.22.4
 
 .PHONY: install-go init-go
 
-setup: install-go init-go
+setup: install-go init-go install-lint
 
 install-go:
 	wget "https://golang.org/dl/go$(GO_VERSION).linux-amd64.tar.gz"
@@ -12,6 +12,9 @@ install-go:
 init-go:
     echo 'export PATH=$$PATH:/usr/local/go/bin' >> $${HOME}/.bashrc
     echo 'export PATH=$$PATH:$${HOME}/go/bin' >> $${HOME}/.bashrc
+
+install-lint:
+    sudo curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.41.1
 
 upgrade-go:
 	sudo rm -rf /usr/bin/go
@@ -31,3 +34,6 @@ coverage:
 
 report:
 	go tool cover -html=coverage.out -o cover.html
+
+check-format:
+    test -z $$(go fmt ./...)
