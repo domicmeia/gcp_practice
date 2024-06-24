@@ -1,15 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/domicmeia/gcp_practice/handler/rest"
 )
 
 func main() {
 
-	addr := ":8080"
+	addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
+
+	if addr == ":" {
+		addr = ":8080"
+	}
 
 	mux := http.NewServeMux()
 
@@ -18,9 +24,4 @@ func main() {
 	log.Printf("listening on %s\n", addr)
 
 	log.Fatal(http.ListenAndServe(addr, mux))
-}
-
-type Resp struct {
-	Language    string `json:"language"`
-	Translation string `json:"translation"`
 }
