@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/domicmeia/gcp_practice/handler/rest"
 )
@@ -17,11 +18,23 @@ func main() {
 		addr = ":8080"
 	}
 
-	mux := http.NewServeMux()
+	timeout := 10 * time.Second
+
+	server := &http.Server{
+		Addr:         addr,
+		Handler:      http.NewServeMux(),
+		ReadTimeout:  timeout,
+		WriteTimeout: timeout,
+	}
+
+	mux := server.Handler.(*http.ServeMux)
 
 	mux.HandleFunc("/translate/hello", rest.TranslateHandler)
 
 	log.Printf("listening on %s\n", addr)
 
-	log.Fatal(http.ListenAndServe(addr, mux))
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatalf("failed to listen and serve: %v", err)
+	}
 }
