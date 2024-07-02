@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/domicmeia/gcp_practice/handler/healthcheck"
 	"github.com/domicmeia/gcp_practice/handler/rest"
 )
 
@@ -30,6 +31,7 @@ func main() {
 	mux := server.Handler.(*http.ServeMux)
 
 	mux.HandleFunc("/translate/hello", rest.TranslateHandler)
+	mux.HandleFunc("/healthchekc", healthcheck.Healthcheck)
 
 	log.Printf("listening on %s\n", addr)
 
