@@ -14,7 +14,8 @@ issues:
    exclude-use-default: false
 
 output:
-  format: colored-line-number
+  formats:
+    - format: colored-line-number
 
   print-issued-lines: false
 
