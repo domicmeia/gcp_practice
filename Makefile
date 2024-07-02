@@ -42,5 +42,5 @@ static-check:
 	golangci-lint run
 
 copy-hooks:
-    chmod +x scripts/hooks/*
+	chmod +x scripts/hooks/*
 	cp -r scripts/hooks .git/.
