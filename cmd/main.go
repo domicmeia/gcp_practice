@@ -35,7 +35,7 @@ func main() {
 	translateHandler := rest.NewTranslateHandler(translationService)
 
 	mux.HandleFunc("/translate/hello", translateHandler.TranslateHandler)
-	mux.HandleFunc("/healthchekc", healthcheck.Healthcheck)
+	mux.HandleFunc("/healthcheck", healthcheck.Healthcheck)
 
 	log.Printf("listening on %s\n", addr)
 

@@ -7,8 +7,16 @@ import (
 	"testing"
 
 	"github.com/domicmeia/gcp_practice/handler/rest"
-	"github.com/domicmeia/gcp_practice/translation"
 )
+
+type stubbedService struct{}
+
+func (s *stubbedService) Translate(word string, language string) string {
+	if word == "foo" {
+		return "bar"
+	}
+	return ""
+}
 
 func TestTranslateAPI(t *testing.T) {
 
@@ -19,25 +27,26 @@ func TestTranslateAPI(t *testing.T) {
 		ExpectedTranslation string
 	}{
 		{
-			Endpoint:            "/hello",
+			Endpoint:            "/translate/foo",
 			StatusCode:          200,
 			ExpectedLanguage:    "english",
-			ExpectedTranslation: "hello",
+			ExpectedTranslation: "bar",
 		}, {
-			Endpoint:            "/hello?language=german",
+			Endpoint:            "/translate/foo?language=gerMan",
 			StatusCode:          200,
 			ExpectedLanguage:    "german",
-			ExpectedTranslation: "hallo",
+			ExpectedTranslation: "bar",
 		}, {
-			Endpoint:            "/hello?language=dutch",
-			StatusCode:          http.StatusNotFound,
+			Endpoint:            "/translate/baz",
+			StatusCode:          404,
 			ExpectedLanguage:    "",
 			ExpectedTranslation: "",
 		},
 	}
 
-	underTest := rest.NewTranslateHandler(translation.NewStaticService())
-	handler := http.HandlerFunc(underTest.TranslateHandler)
+	// underTest := rest.NewTranslateHandler(translation.NewStaticService())
+	h := rest.NewTranslateHandler(&stubbedService{})
+	handler := http.HandlerFunc(h.TranslateHandler)
 
 	for _, test := range tt {
 		rr := httptest.NewRecorder()
