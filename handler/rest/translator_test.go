@@ -27,17 +27,17 @@ func TestTranslateAPI(t *testing.T) {
 		ExpectedTranslation string
 	}{
 		{
-			Endpoint:            "/translate/foo",
+			Endpoint:            "/foo",
 			StatusCode:          200,
 			ExpectedLanguage:    "english",
 			ExpectedTranslation: "bar",
 		}, {
-			Endpoint:            "/translate/foo?language=gerMan",
+			Endpoint:            "/foo?language=german",
 			StatusCode:          200,
 			ExpectedLanguage:    "german",
 			ExpectedTranslation: "bar",
 		}, {
-			Endpoint:            "/translate/baz",
+			Endpoint:            "/baz",
 			StatusCode:          404,
 			ExpectedLanguage:    "",
 			ExpectedTranslation: "",
