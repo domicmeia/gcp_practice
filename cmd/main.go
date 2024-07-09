@@ -9,6 +9,7 @@ import (
 
 	"github.com/domicmeia/gcp_practice/handler/healthcheck"
 	"github.com/domicmeia/gcp_practice/handler/rest"
+	"github.com/domicmeia/gcp_practice/translation"
 )
 
 func main() {
@@ -30,7 +31,10 @@ func main() {
 
 	mux := server.Handler.(*http.ServeMux)
 
-	mux.HandleFunc("/translate/hello", rest.TranslateHandler)
+	translationService := translation.NewStaticService()
+	translateHandler := rest.NewTranslateHandler(translationService)
+
+	mux.HandleFunc("/translate/hello", translateHandler.TranslateHandler)
 	mux.HandleFunc("/healthchekc", healthcheck.Healthcheck)
 
 	log.Printf("listening on %s\n", addr)
