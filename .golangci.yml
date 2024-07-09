@@ -11,11 +11,12 @@ linters-setting:
     - checks: ["all", "ST1*"]
 
 issues:
-   exclude-use-default: false
+  exclude-use-default: false
+  exclude:
+    - "ST1000: at least one file in a package should have a package comment"
 
 output:
-  formats:
-    - format: colored-line-number
+  format: colored-line-number
 
   print-issued-lines: false
 

@@ -44,7 +44,7 @@ func TestTranslateAPI(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		if rr.Code != test.StatusCode {
-			t.Errorf(`expected status %d but recieved %d`, test.StatusCode, rr.Code)
+			t.Errorf(`expected status %d but received %d`, test.StatusCode, rr.Code)
 		}
 		var resp rest.Resp
 
