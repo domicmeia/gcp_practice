@@ -1,6 +1,7 @@
 package translation_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/domicmeia/gcp_practice/translation"
@@ -30,4 +31,42 @@ type MockHelloClient struct {
 func (m *MockHelloClient) Translate(word, language string) (string, error) {
 	args := m.Called(word, language)
 	return args.String(0), args.Error(1)
+}
+
+func (suite *RemoteServiceTestSuite) TestTranslate() {
+	suite.client.On("Translate", "foo", "bar").Return("baz", nil)
+
+	res := suite.underTest.Translate("foo", "bar")
+
+	suite.Equal(res, "baz")
+	suite.client.AssertExpectations(suite.T())
+}
+
+func (suite *RemoteServiceTestSuite) TestTranslate_CaseSensitive() {
+	suite.client.On("Translate", "foo", "bar").Return("baz", nil)
+
+	res := suite.underTest.Translate("Foo", "bar")
+
+	suite.Equal(res, "baz")
+	suite.client.AssertExpectations(suite.T())
+}
+
+func (suite *RemoteServiceTestSuite) TestTranslate_Error() {
+	suite.client.On("Translate", "foo", "bar").Return("baz", errors.New("failure"))
+
+	res := suite.underTest.Translate("foo", "bar")
+
+	suite.Equal(res, "")
+	suite.client.AssertExpectations(suite.T())
+}
+
+func (suite *RemoteServiceTestSuite) TestTranslate_Cache() {
+	suite.client.On("Translate", "foo", "bar").Return("baz", nil).Times(1)
+
+	res1 := suite.underTest.Translate("foo", "bar")
+	res2 := suite.underTest.Translate("Foo", "bar")
+
+	suite.Equal(res1, "baz")
+	suite.Equal(res2, "baz")
+	suite.client.AssertExpectations(suite.T())
 }
