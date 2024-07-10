@@ -48,7 +48,13 @@ func (c *APIClient) Translate(word, language string) (string, error) {
 	}
 
 	b, _ = io.ReadAll(resp.Body)
-	defer resp.Body.Close()
+
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	var m map[string]interface{}
 
