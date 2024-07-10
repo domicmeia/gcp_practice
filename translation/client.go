@@ -35,7 +35,7 @@ func (c *APIClient) Translate(word, language string) (string, error) {
 	resp, err := http.Post(c.endpoint, "application/json", bytes.NewBuffer(b))
 
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 		return "", errors.New("call to api failed")
 	}
 
