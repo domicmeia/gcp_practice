@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/domicmeia/gcp_practice/config"
 	"github.com/domicmeia/gcp_practice/handler/healthcheck"
 	"github.com/domicmeia/gcp_practice/handler/rest"
 	"github.com/domicmeia/gcp_practice/translation"
@@ -14,11 +13,8 @@ import (
 
 func main() {
 
-	addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
-
-	if addr == ":" {
-		addr = ":8080"
-	}
+	cfg := config.LoadConfiguration()
+	addr := cfg.Port
 
 	timeout := 10 * time.Second
 

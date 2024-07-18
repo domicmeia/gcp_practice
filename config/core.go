@@ -40,23 +40,23 @@ func (c *Configuration) ParsePort() {
 		c.Port = ":" + c.Port
 	}
 
-	if _, err := strconv.Atoi(string(c.Port[:1])); err != nil {
+	if _, err := strconv.Atoi(string(c.Port[1:])); err != nil {
 		fmt.Printf("invalid port %s", c.Port)
 		c.Port = defaultConfiguration.Port
 	}
 }
 
 func (c *Configuration) LoadFromJSON(path string) error {
-	log.Printf("loading configuration from file %s/n", path)
+	log.Printf("loading configuration from file %s\n", path)
 
 	b, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("unable to log file %s/n", err.Error())
+		log.Printf("unable to log file %s\n", err.Error())
 		return errors.New("unable to load configuration")
 	}
 
 	if err := json.Unmarshal(b, c); err != nil {
-		log.Printf("unalbe to parse the file %s/n", err.Error())
+		log.Printf("unalbe to parse the file %s\n", err.Error())
 		return errors.New("unable to load configuration")
 	}
 
@@ -66,7 +66,7 @@ func (c *Configuration) LoadFromJSON(path string) error {
 	}
 
 	if c.DefaultLanguage == "" {
-		log.Panicf("Empty Language, reverting to default")
+		log.Printf("Empty Language, reverting to default")
 		c.DefaultLanguage = defaultConfiguration.DefaultLanguage
 	}
 
@@ -75,7 +75,7 @@ func (c *Configuration) LoadFromJSON(path string) error {
 
 func LoadConfiguration() Configuration {
 
-	cfgfileFlag := flag.String("config_file", "", "load configuration from file")
+	cfgfileFlag := flag.String("config_file", "", "load configuration from a file")
 	portFlag := flag.String("port", "", "set port")
 
 	flag.Parse()
@@ -83,7 +83,7 @@ func LoadConfiguration() Configuration {
 
 	if cfgfileFlag != nil && *cfgfileFlag != "" {
 		if err := cfg.LoadFromJSON(*cfgfileFlag); err != nil {
-			log.Printf("unable to load configuration form file %s, using default values", *cfgfileFlag)
+			log.Printf("unable to load configuration from file %s, using default values", *cfgfileFlag)
 		}
 	}
 
