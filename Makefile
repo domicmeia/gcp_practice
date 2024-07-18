@@ -4,9 +4,8 @@ TAG := $(shell git describe --abbrev=0 --tags --always)
 HASH := $(shell git rev-parse HEAD)
 DATE := $(shell date +%Y-%m-%d.%H:%M:%S)
 LDFLAGS := -w -X github.com/domicmeia/gcp_practice/handler.hash=$(HASH)
-              -X github.com/domicmeia/gcp_practice/handler.tag=$(TAG)
-              -X github.com/domicmeia/gcp_practice/handler.date=$(DATE)
-
+			  -X github.com/domicmeia/gcp_practice/handler.tag=$(TAG)
+			  -X github.com/domicmeia/gcp_practice/handler.date=$(DATE)
 
 .PHONY: install-go init-go
 
