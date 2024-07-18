@@ -3,9 +3,9 @@ GO_VERSION := 1.22.4
 TAG := $(shell git describe --abbrev=0 --tags --always)
 HASH := $(shell git rev-parse HEAD)
 DATE := $(shell date +%Y-%m-%d.%H:%M:%S)
-LDFLAGS := -w -X github.com/domicmeia/gcp_practice/info.hash=$(HASH) \
-				-X github.com/domicmeia/gcp_practice/info.tag=$(TAG) \
-				-X github.com/domicmeia/gcp_practice/info.date=$(DATE)
+LDFLAGS := -w -X github.com/domicmeia/gcp_practice/handler/info.hash=$(HASH) \
+				-X github.com/domicmeia/gcp_practice/handler/info.tag=$(TAG) \
+				-X github.com/domicmeia/gcp_practice/handler/info.date=$(DATE)
 
 .PHONY: install-go init-go
 
@@ -33,7 +33,7 @@ ldflags:
 	@echo $(LDFLAGS)
 
 build:
-	go build -ldflags "$(LDFLAGS)" -o api main.go
+	go build -ldflags "$(LDFLAGS)" -o api cmd/main.go
 
 test:
 	go test ./... -coverprofile=coverage.out
