@@ -1,5 +1,13 @@
 GO_VERSION := 1.22.4
 
+TAG := $(shell git describe --abbrev=0 --tags --always)
+HASH := $(shell git rev-parse HEAD)
+DATE := $(shell date +%Y-%m-%d.%H:%M:%S)
+LDFLAGS := -w -X github.com/domicmeia/gcp_practice/handler.hash=$(HASH)
+              -X github.com/domicmeia/gcp_practice/handler.tag=$(TAG)
+              -X github.com/domicmeia/gcp_practice/handler.date=$(DATE)
+
+
 .PHONY: install-go init-go
 
 setup: install-go init-go install-lint copy-hooks
@@ -23,7 +31,7 @@ upgrade-go:
 	rm go$(GO_VERSION).linux-amd64.tar.gz
 
 build:
-	go build -o api cmd/main.go
+	go build -ldflags "$(LDFLAGS)" -o cmd/main.go
 
 test:
 	go test ./... -coverprofile=coverage.out

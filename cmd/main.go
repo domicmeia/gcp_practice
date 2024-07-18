@@ -7,6 +7,7 @@ import (
 
 	"github.com/domicmeia/gcp_practice/config"
 	"github.com/domicmeia/gcp_practice/handler/healthcheck"
+	"github.com/domicmeia/gcp_practice/handler/info"
 	"github.com/domicmeia/gcp_practice/handler/rest"
 	"github.com/domicmeia/gcp_practice/translation"
 )
@@ -41,6 +42,7 @@ func main() {
 
 	mux.HandleFunc("/translate/hello", translateHandler.TranslateHandler)
 	mux.HandleFunc("/healthcheck", healthcheck.Healthcheck)
+	mux.HandleFunc("/info", info.Info)
 
 	log.Printf("listening on %s\n", addr)
 

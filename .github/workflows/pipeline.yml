@@ -4,6 +4,9 @@ on:
   push:
     branches:                                                
       - main
+    tags:
+      - v*
+
 jobs:
   format-check:
     name: Check formatting
@@ -98,6 +101,8 @@ jobs:
     name: Release
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+  
     steps:
 
     - name: Checkout code
@@ -107,6 +112,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
        name: api
+    
+    - name: Change Log
+      uses: scottbrenner/generate-changelog-action@master
+      id: Changelog
       
     - name: Create Release
       id: create_release
@@ -117,9 +126,9 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Still in experimentation phase
-          draft: true
-          prerelease: true
+            ${{ steps.Changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
 
     - name: Upload Release Binary
       uses: actions/upload-release-asset@v1
