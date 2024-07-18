@@ -3,9 +3,9 @@ GO_VERSION := 1.22.4
 TAG := $(shell git describe --abbrev=0 --tags --always)
 HASH := $(shell git rev-parse HEAD)
 DATE := $(shell date +%Y-%m-%d.%H:%M:%S)
-LDFLAGS := -w -X github.com/domicmeia/gcp_practice/handler.hash=$(HASH) \
-				-X github.com/domicmeia/gcp_practice/handler.tag=$(TAG) \
-				-X github.com/domicmeia/gcp_practice/handler.date=$(DATE)
+LDFLAGS := -w -X github.com/domicmeia/gcp_practice/info.hash=$(HASH) \
+				-X github.com/domicmeia/gcp_practice/info.tag=$(TAG) \
+				-X github.com/domicmeia/gcp_practice/info.date=$(DATE)
 
 .PHONY: install-go init-go
 
@@ -28,6 +28,9 @@ upgrade-go:
 	wget "https://golang.org/dl/go$(GO_VERSION).linux-amd64.tar.gz"
 	sudo tar -C /usr/local -xzf go$(GO_VERSION).linux-amd64.tar.gz
 	rm go$(GO_VERSION).linux-amd64.tar.gz
+
+ldflags:
+	@echo $(LDFLAGS)
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o cmd/main.go
