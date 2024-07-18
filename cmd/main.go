@@ -16,6 +16,8 @@ func main() {
 	cfg := config.LoadConfiguration()
 	addr := cfg.Port
 
+	var translationService rest.Translator
+
 	timeout := 10 * time.Second
 
 	server := &http.Server{
@@ -27,7 +29,14 @@ func main() {
 
 	mux := server.Handler.(*http.ServeMux)
 
-	translationService := translation.NewStaticService()
+	translationService = translation.NewStaticService()
+
+	if cfg.LegacyEndpoit != "" {
+		log.Printf("creating external translation client: %s", cfg.LegacyEndpoit)
+		client := translation.NewHelloClient(cfg.LegacyEndpoit)
+		translationService = translation.NewRemoteService(client)
+	}
+
 	translateHandler := rest.NewTranslateHandler(translationService)
 
 	mux.HandleFunc("/translate/hello", translateHandler.TranslateHandler)
