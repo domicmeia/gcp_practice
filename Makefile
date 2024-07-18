@@ -33,7 +33,7 @@ ldflags:
 	@echo $(LDFLAGS)
 
 build:
-	go build -ldflags "$(LDFLAGS)" -o cmd/main.go
+	go build -ldflags "$(LDFLAGS)" -o api main.go
 
 test:
 	go test ./... -coverprofile=coverage.out
