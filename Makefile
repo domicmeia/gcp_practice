@@ -9,7 +9,7 @@ LDFLAGS := -w -X github.com/domicmeia/gcp_practice/handler/info.hash=$(HASH) \
 
 .PHONY: install-go init-go
 
-setup: install-go init-go install-lint copy-hooks
+setup: install-go init-go install-lint copy-hooks install-godog
 
 install-go:
 	wget "https://golang.org/dl/go$(GO_VERSION).linux-amd64.tar.gz"
@@ -28,6 +28,9 @@ upgrade-go:
 	wget "https://golang.org/dl/go$(GO_VERSION).linux-amd64.tar.gz"
 	sudo tar -C /usr/local -xzf go$(GO_VERSION).linux-amd64.tar.gz
 	rm go$(GO_VERSION).linux-amd64.tar.gz
+
+install-godog:
+	go install github.com/cucumber/godog/cmd/godog@latest
 
 ldflags:
 	@echo $(LDFLAGS)

@@ -17,8 +17,6 @@ func main() {
 	cfg := config.LoadConfiguration()
 	addr := cfg.Port
 
-	var translationService rest.Translator
-
 	timeout := 10 * time.Second
 
 	server := &http.Server{
@@ -28,7 +26,21 @@ func main() {
 		WriteTimeout: timeout,
 	}
 
-	mux := server.Handler.(*http.ServeMux)
+	// mux := server.Handler.(*http.ServeMux)
+	mux := API(cfg)
+
+	log.Printf("listening on %s\n", addr)
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatalf("failed to listen and serve: %v", err)
+	}
+}
+
+func API(cfg config.Configuration) *http.ServeMux {
+	mux := http.NewServeMux()
+
+	var translationService rest.Translator
 
 	translationService = translation.NewStaticService()
 
@@ -44,10 +56,5 @@ func main() {
 	mux.HandleFunc("/healthcheck", healthcheck.Healthcheck)
 	mux.HandleFunc("/info", info.Info)
 
-	log.Printf("listening on %s\n", addr)
-
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatalf("failed to listen and serve: %v", err)
-	}
+	return mux
 }
