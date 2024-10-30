@@ -30,6 +30,7 @@ func main() {
 	mux := API(cfg)
 
 	log.Printf("listening on %s\n", addr)
+	log.Fatal(http.ListenAndServe(addr, mux))
 
 	err := server.ListenAndServe()
 	if err != nil {
