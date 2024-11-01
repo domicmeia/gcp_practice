@@ -16,7 +16,6 @@ import (
 )
 
 var (
-	pool *dockertest.Pool
 	database *dockertest.Resource
 )
 
