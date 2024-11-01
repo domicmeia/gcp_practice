@@ -34,7 +34,7 @@ func (api *apiFeature) iTranslateItTo(arg1 string) error {
 func (api *apiFeature) theResponseShouldBe(arg1 string) error {
 	url := fmt.Sprintf("%s/translate/%s", api.server.URL, api.word)
 
-	resp, err := api.client.R().SetHeader("Content-Type", "application/json").SetQueryParams(map[string]string{"language": api.language, }).SetResult(&rest.Resp{}).Get(url)
+	resp, err := api.client.R().SetHeader("Content-Type", "application/json").SetQueryParams(map[string]string{"language": api.language}).SetResult(&rest.Resp{}).Get(url)
 
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func InitializeTestSuite(sc *godog.TestSuiteContext) {
 
 		redis, err := pool.RunWithOptions(&dockertest.RunOptions{
 			Repository: "redis",
-			Mounts: []string{mount},
+			Mounts:     []string{mount},
 		})
 
 		if err != nil {
@@ -78,8 +78,8 @@ func InitializeTestSuite(sc *godog.TestSuiteContext) {
 		}
 
 		if err := redis.Expire(600); err != nil {
-            panic("unable to set expiration on container")
-        }
+			panic("unable to set expiration on container")
+		}
 		database = redis
 	})
 
@@ -90,7 +90,6 @@ func InitializeTestSuite(sc *godog.TestSuiteContext) {
 		}
 	})
 }
-
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 
