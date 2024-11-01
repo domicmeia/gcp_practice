@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -53,6 +54,45 @@ func (api *apiFeature) theWord(arg1 string) error {
 	return nil
 }
 
+func InitializeTestSuite(sc *godog.TestSuiteContext) {
+
+	sc.BeforeSuite(func() {
+		pool, err := dockertest.NewPool("")
+		if err != nil {
+			panic(fmt.Sprintf("Unable to create connection pool %s", err))
+		}
+
+		wd, err := os.Getwd()
+		if err != nil {
+			panic(fmt.Sprintf("Unable to get working directory %s", err))
+		}
+
+		mount := fmt.Sprintf("%s/data/:/data/", filepath.Dir(wd))
+
+		redis, err := pool.RunWithOptions(&dockertest.RunOptions{
+			Repository: "redis",
+			Mounts: []string{mount},
+		})
+
+		if err != nil {
+			panic(fmt.Sprintf("Unable to create the container: %s", err))
+		}
+
+		if err := redis.Expire(600); err != nil {
+            panic("unable to set expiration on container")
+        }
+		database = redis
+	})
+
+	sc.AfterSuite(func() {
+		err := database.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
+}
+
+
 func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	client := resty.New()
@@ -82,39 +122,4 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I translate it to "([^"]*)"$`, api.iTranslateItTo)
 	ctx.Step(`^the response should be "([^"]*)"$`, api.theResponseShouldBe)
 	ctx.Step(`^the word "([^"]*)"$`, api.theWord)
-}
-
-func InitializeTestSuite(sc *godog.TestSuiteContext) {
-
-	sc.BeforeSuite(func() {
-		pool, err := dockertest.NewPool("")
-		if err != nil {
-			panic(fmt.Sprintf("Unabel to create connection pool %s", err))
-		}
-
-		wd, err := os.Getwd()
-		if err != nil {
-			panic(fmt.Sprintf("Unable to get working directory %s", err))
-		}
-
-		mount := fmt.Sprintf("%s/data/:/data/", filepath.Dir(wd))
-
-		redis, err := pool.RunWithOptions(&dockertest.RunOptions{
-			Repository: "redis",
-			Mounts: []string{mount},
-		})
-
-		if err != nil {
-			panic(fmt.Sprintf("Unable to create the container: %s", err))
-		}
-
-		if err := redis.Expire(600); err != nil {
-            panic("unable to set expiration on container")
-        }
-		database = redis
-	})
-
-	sc.AfterSuite(func() {
-		database.Close()
-	})
 }
