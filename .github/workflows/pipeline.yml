@@ -158,7 +158,7 @@ jobs:
       run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:min .
 
     - name: Build Dev
-      run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev --traget=dev .
+      run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev --target=dev .
 
     - name: Log in to the GHCR
       uses: docker/login-action@master
