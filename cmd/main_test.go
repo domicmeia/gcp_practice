@@ -4,11 +4,19 @@ import (
 	"context"
 	"fmt"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 
 	"github.com/cucumber/godog"
 	"github.com/domicmeia/gcp_practice/config"
 	"github.com/domicmeia/gcp_practice/handler/rest"
 	"github.com/go-resty/resty/v2"
+	"github.com/ory/dockertest/v3"
+)
+
+var (
+	pool *dockertest.Pool
+	database *dockertest.Resource
 )
 
 type apiFeature struct {
@@ -46,6 +54,7 @@ func (api *apiFeature) theWord(arg1 string) error {
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
+
 	client := resty.New()
 	api := &apiFeature{
 		client: client,
@@ -54,6 +63,9 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		cfg := config.Configuration{}
 		cfg.LoadFromEnv()
+
+		cfg.DatabaseURL = "localhost"
+		cfg.DatabasePort = database.GetPort("6379/tcp")
 
 		mux := API(cfg)
 		server := httptest.NewServer(mux)
@@ -70,4 +82,39 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I translate it to "([^"]*)"$`, api.iTranslateItTo)
 	ctx.Step(`^the response should be "([^"]*)"$`, api.theResponseShouldBe)
 	ctx.Step(`^the word "([^"]*)"$`, api.theWord)
+}
+
+func InitializeTestSuite(sc *godog.TestSuiteContext) {
+
+	sc.BeforeSuite(func() {
+		pool, err := dockertest.NewPool("")
+		if err != nil {
+			panic(fmt.Sprintf("Unabel to create connection pool %s", err))
+		}
+
+		wd, err := os.Getwd()
+		if err != nil {
+			panic(fmt.Sprintf("Unable to get working directory %s", err))
+		}
+
+		mount := fmt.Sprintf("%s/data/:/data/", filepath.Dir(wd))
+
+		redis, err := pool.RunWithOptions(&dockertest.RunOptions{
+			Repository: "redis",
+			Mounts: []string{mount},
+		})
+
+		if err != nil {
+			panic(fmt.Sprintf("Unable to create the container: %s", err))
+		}
+
+		if err := redis.Expire(600); err != nil {
+            panic("unable to set expiration on container")
+        }
+		database = redis
+	})
+
+	sc.AfterSuite(func() {
+		database.Close()
+	})
 }

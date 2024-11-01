@@ -50,6 +50,11 @@ func API(cfg config.Configuration) *http.ServeMux {
 		translationService = translation.NewRemoteService(client)
 	}
 
+	if cfg.DatabaseURL != "" {
+		db := translation.NewDatabaseServic(cfg)
+		translationService = db
+	}
+
 	translateHandler := rest.NewTranslateHandler(translationService)
 
 	mux.HandleFunc("/translate/hello", translateHandler.TranslateHandler)
