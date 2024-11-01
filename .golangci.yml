@@ -9,14 +9,12 @@ linters-setting:
   stylecheck:
     - go: "1.22.4"
     - checks: ["all", "ST1*"]
-  gosec:
-    excludes:
-      - G114
 
 issues:
   exclude-use-default: false
   exclude:
     - "ST1000: at least one file in a package should have a package comment"
+    - "G114: Use of net/http serve function that has no support for setting timeouts (gosec)"
 
 output:
   format: colored-line-number
