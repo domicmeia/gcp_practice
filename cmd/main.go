@@ -26,7 +26,6 @@ func main() {
 		WriteTimeout: timeout,
 	}
 
-	// mux := server.Handler.(*http.ServeMux)
 	mux := API(cfg)
 
 	log.Printf("listening on %s\n", addr)
