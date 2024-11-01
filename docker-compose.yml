@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  api-min: 
+    profiles: ['prod'] 
+    image: ghcr.io/domicmeia/gcp_practice:min
+    ports: 
+      - 8080:8080
+    build: .
+  api-dev: 
+    profiles: ['dev'] 
+    image: ghcr.io/domicmeia/gcp_practice:dev
+    ports: 
+      - 8080:8080
+    build:
+      context: .
+      target: dev
